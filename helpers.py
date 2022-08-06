@@ -1,6 +1,6 @@
 import os
+import shutil
 import uuid
-
 
 def ChangeSeedProvider(namespace, name):
     fin = open("TestsSeedProvider.cs", "rt", encoding="utf-8")
@@ -9,8 +9,6 @@ def ChangeSeedProvider(namespace, name):
     data = data.replace('Tests', namespace)
     data = data.replace('NameOfSecondLanguage',  camel_case_split(namespace))
     data = data.replace('الاسم',  name)
-
-
 
     data = data.replace('ParentChildId',str(uuid.uuid4()))
     data = data.replace('ChildId-1', str(uuid.uuid4()))
@@ -22,10 +20,12 @@ def ChangeSeedProvider(namespace, name):
     fin.close()
     return data
 
-def Chech_directory(dir):
-    if not os.path.exists(dir):
+def Chech_directory(directory):
+    if os.path.exists(directory):
+        question(directory)
+    else:
         try:
-            os.mkdir(dir)
+            os.mkdir(directory)
         except OSError as error:
             print(error)
 
@@ -42,15 +42,15 @@ def camel_case_split(str):
     return ' '.join(output)
 
 
-def question():
+def question(directory):
     i = 0
     while i < 2:
-        answer = input("Question? (yes or no)")
+        answer = input(f"Keep directory {directory}? (yes or no)")
         if any(answer.lower() == f for f in ["yes", 'y', '1', 'ye']):
-            print("Yes")
             break
         elif any(answer.lower() == f for f in ['no', 'n', '0']):
-            print("No")
+            remove_dir(directory)
+            Chech_directory(directory)
             break
         else:
             i += 1
@@ -60,9 +60,10 @@ def question():
                 print("Nothing done")
 
 
-# try:
-#     os.remove(directory)
-#     print("% s removed successfully" % "{directory}")
-# except OSError as error:
-#     print(error)
-#     print("File path can not be removed")
+def remove_dir(directory):
+    try:
+        shutil.rmtree(directory)
+        print(f"{directory} removed successfully")
+    except OSError as error:
+        print(error)
+        print("File path can not be removed")
